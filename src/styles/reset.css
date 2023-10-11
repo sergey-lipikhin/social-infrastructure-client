@@ -1,0 +1,47 @@
+@import "@arcgis/core/assets/esri/themes/light/main.css";
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  list-style-type: none;
+}
+
+a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  display: block;
+  padding: 0;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  background-color: unset;
+}
+
+input,
+textarea {
+  outline: none;
+  border: 0;
+  font-family: inherit;
+  line-height: inherit;
+  font-size: inherit;
+}
+
+body {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+}
