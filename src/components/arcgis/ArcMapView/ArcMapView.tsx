@@ -1,14 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import esriConfig from '@arcgis/core/config';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 import Point from '@arcgis/core/geometry/Point';
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 import Graphic from '@arcgis/core/Graphic';
+import Circle from '@arcgis/core/geometry/Circle';
+import SimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 
 export const ArcMapView: React.FC = () => {
   const mapDiv = useRef(null);
   const mapRef = useRef<Map | null>(null);
+
+  const [c, setC] = useState(0);
 
   useEffect(() => {
     // eslint-disable-next-line max-len
@@ -30,6 +34,16 @@ export const ArcMapView: React.FC = () => {
     mapRef.current.add(graphicsLayer);
 
     view.on('click', (event) => {
+      if (c % 2 === 0) {
+        console.log(c);
+      }
+      console.log(c);
+
+      const point = new Point({
+        latitude: event.mapPoint.latitude,
+        longitude: event.mapPoint.longitude,
+      });
+
       const markerSymbol = {
         type: 'simple-marker',
         color: [226, 119, 40],
@@ -40,20 +54,52 @@ export const ArcMapView: React.FC = () => {
       };
 
       const graphic = new Graphic({
-        geometry: new Point({
-          latitude: event.mapPoint.latitude,
-          longitude: event.mapPoint.longitude,
-        }),
+        geometry: point,
         symbol: markerSymbol,
       });
 
       graphicsLayer.add(graphic);
+
+      const circleGeometry = new Circle({
+        center: point,
+        geodesic: true,
+        numberOfPoints: 100,
+        radius: 5,
+        radiusUnit: 'kilometers',
+      });
+
+      const fillSymbol = new SimpleFillSymbol({
+        color: [226, 119, 40, 0.2],
+        outline: {
+          color: [0, 0, 0, 1],
+          width: 1,
+        },
+      });
+
+      const circleGraphic = new Graphic({
+        geometry: circleGeometry,
+        symbol: fillSymbol,
+      });
+
+      graphicsLayer.add(circleGraphic);
+
+      graphicsLayer.add(circleGraphic);
     });
 
     return () => view.destroy();
   }, []);
 
   return (
-    <div ref={mapDiv} className="map-view" />
+    <>
+      <button
+        type="button"
+        className="btn btn-warning"
+        onClick={() => setC(p => p + 1)}
+      >
+        Click on me
+      </button>
+      <p>{c}</p>
+      <div ref={mapDiv} className="map-view" />
+    </>
   );
 };
