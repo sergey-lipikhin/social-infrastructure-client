@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import esriConfig from '@arcgis/core/config';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
@@ -8,18 +8,36 @@ import Graphic from '@arcgis/core/Graphic';
 import Circle from '@arcgis/core/geometry/Circle';
 import SimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 
+import Editor from '@arcgis/core/widgets/Editor';
+import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
+
 export const ArcMapView: React.FC = () => {
+  const [points, setPoints] = useState<Point[]>([]);
   const mapDiv = useRef(null);
   const mapRef = useRef<Map | null>(null);
 
   const [c, setC] = useState(0);
 
   useEffect(() => {
+    console.log(c);
+  }, [c]);
+
+  console.log(points);
+
+  useEffect(() => {
     // eslint-disable-next-line max-len
     esriConfig.apiKey = 'AAPK4b4113c9c3744936bfb62773e5264aeephEk2ardc21L5QjW12x19tQAoumUJIo3wOlYStHpMuhNzZTmf7cuv7okg-D0BUPY';
 
+    const myPointsFeatureLayer = new FeatureLayer({
+      url: "https://services1.arcgis.com/J4KEg3K5KfnHwu4N/arcgis/rest/services/dsadasdasdasd_as/FeatureServer/0?token=AAPK4b4113c9c3744936bfb62773e5264aeephEk2ardc21L5QjW12x19tQAoumUJIo3wOlYStHpMuhNzZTmf7cuv7okg-D0BUPY",
+      apiKey: 'AAPK4b4113c9c3744936bfb62773e5264aeephEk2ardc21L5QjW12x19tQAoumUJIo3wOlYStHpMuhNzZTmf7cuv7okg-D0BUPY',
+    });
+
+    console.log(myPointsFeatureLayer);
+
     mapRef.current = new Map({
       basemap: 'streets-vector',
+      layers: [myPointsFeatureLayer],
     });
 
     const view = new MapView({
@@ -34,15 +52,12 @@ export const ArcMapView: React.FC = () => {
     mapRef.current.add(graphicsLayer);
 
     view.on('click', (event) => {
-      if (c % 2 === 0) {
-        console.log(c);
-      }
-      console.log(c);
-
       const point = new Point({
         latitude: event.mapPoint.latitude,
         longitude: event.mapPoint.longitude,
       });
+
+      setPoints(prevState => [...prevState, point]);
 
       const markerSymbol = {
         type: 'simple-marker',
@@ -85,6 +100,8 @@ export const ArcMapView: React.FC = () => {
 
       graphicsLayer.add(circleGraphic);
     });
+
+    console.log(myPointsFeatureLayer.loadStatus);
 
     return () => view.destroy();
   }, []);
