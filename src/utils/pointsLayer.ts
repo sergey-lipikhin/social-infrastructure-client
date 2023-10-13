@@ -36,6 +36,7 @@ export function createPointsLayer(): FeatureLayer {
     url: import.meta.env.VITE_POINTS_LAYER_URL,
     renderer,
     labelingInfo: [label],
+    title: 'Пункт незламності',
   });
 }
 
@@ -51,4 +52,25 @@ export async function getPointsData(pointsLayer: FeatureLayer) {
     geometry,
     attributes,
   }));
+}
+
+export async function getRadiusById(
+  pointsLayer: FeatureLayer,
+  objectId: number,
+) {
+  const query = pointsLayer.createQuery();
+
+  query.where = `OBJECTID = ${objectId}`;
+  query.outFields = ['radius'];
+
+  const queryResult = await pointsLayer.queryFeatures(query);
+
+  // Ensure that a feature was found
+  if (queryResult.features.length > 0) {
+    const { radius } = queryResult.features[0].attributes;
+
+    return radius;
+  }
+
+  return null;
 }

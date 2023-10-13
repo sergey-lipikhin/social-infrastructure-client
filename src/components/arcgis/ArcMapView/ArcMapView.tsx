@@ -8,7 +8,7 @@ import Point from '@arcgis/core/geometry/Point';
 import Editor from '@arcgis/core/widgets/Editor';
 import { createPointsLayer, getPointsData } from '@utils/pointsLayer';
 import { hangDrawRadiusOnCLickEvent } from '@utils/hangDrawRadiusOnCLickEvent';
-import { createAreasLayer } from '@utils/areasLayer';
+import { createAreasLayer, getAreasData } from '@utils/areasLayer';
 
 export const ArcMapView: React.FC = () => {
   const mapDiv = useRef(null);
@@ -23,6 +23,10 @@ export const ArcMapView: React.FC = () => {
     const pointsLayer = createPointsLayer();
     const areasLayer = createAreasLayer();
 
+    pointsLayer.when(() => {
+      console.log(pointsLayer.title);
+    });
+
     mapRef.current = new Map({
       basemap: 'streets-vector',
       layers: [pointsLayer, areasLayer],
@@ -31,7 +35,10 @@ export const ArcMapView: React.FC = () => {
     const view = new MapView({
       map: mapRef.current,
       container: mapDiv.current ?? undefined,
-      center: new Point({ latitude: 34.006223186690285, longitude: -118.81267318739927 }),
+      center: new Point({
+        latitude: 47.826334,
+        longitude: 35.157650,
+      }),
       zoom: 11,
     });
 
@@ -41,7 +48,8 @@ export const ArcMapView: React.FC = () => {
 
     hangDrawRadiusOnCLickEvent(view, pointsLayer);
 
-    getPointsData(pointsLayer).then(x => console.log(x));
+    // getPointsData(pointsLayer).then(x => console.log(x));
+    getAreasData(areasLayer).then(x => console.log(x[0].geometry.centroid));
 
     view.ui.add(editor, 'top-right');
 
