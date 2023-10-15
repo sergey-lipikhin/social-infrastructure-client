@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 import React, { useEffect, useRef, useState } from 'react';
-import cn from 'classnames';
 import esriConfig from '@arcgis/core/config';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
@@ -8,29 +7,30 @@ import Point from '@arcgis/core/geometry/Point';
 
 import Editor from '@arcgis/core/widgets/Editor';
 import { createPointsLayer, getPointsData } from '@utils/pointsLayer';
-import { hangDrawRadiusOnCLickEvent } from '@utils/hangDrawRadiusOnCLickEvent';
+import { drawRadiusEvent } from '@utils/drawRadiusEvent';
 import { createAreasLayer, getAreasData } from '@utils/areasLayer';
 import Home from '@arcgis/core/widgets/Home';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion';
 import Search from '@arcgis/core/widgets/Search';
 
 import './ArcMapView.css';
-import { PointFeaturesFilter } from '../PointFeaturesFilter';
+import FeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
+import Expand from '@arcgis/core/widgets/Expand';
 
 export const ArcMapView: React.FC = () => {
   const mapDiv = useRef(null);
   const mapRef = useRef<Map | null>(null);
 
-  const [viewMain, setViewMain] = useState<MapView | null>(null);
-  const pointsLayerRef = useRef<__esri.FeatureLayer | null>(null);
+  const expandWidget = useRef<HTMLDivElement | null>(null);
+  const pointsLayerView = useRef<__esri.FeatureLayerView | null>(null);
+  const areasLayerView = useRef<__esri.FeatureLayerView | null>(null);
 
   const [c, setC] = useState(0);
 
   useEffect(() => {
     esriConfig.apiKey = import.meta.env.VITE_API_KEY;
 
-    pointsLayerRef.current = createPointsLayer();
-    const pointsLayer = pointsLayerRef.current;
+    const pointsLayer = createPointsLayer();
     const areasLayer = createAreasLayer();
 
     mapRef.current = new Map({
@@ -64,14 +64,36 @@ export const ArcMapView: React.FC = () => {
       view,
     });
 
-    // Add the search widget to the top right corner of the view
-    // Add the home button to the top left corner of the view
+    let expandEvent: IHandle; let pointClickEvent: IHandle;
 
-    // editor.viewModel.watch('state', () => {
-    //   view.graphics.removeAll();
-    // });
+    view.whenLayerView(pointsLayer).then((layerView) => {
+      pointsLayerView.current = layerView;
 
-    const drawRadiusEventId = hangDrawRadiusOnCLickEvent(view, pointsLayer);
+      const seasonsExpand = new Expand({
+        view,
+        content: expandWidget.current ?? undefined,
+        expandIcon: 'filter',
+        group: 'top-left',
+      });
+
+      expandEvent = seasonsExpand.watch('expanded', () => {
+        if (!seasonsExpand.expanded && pointsLayerView.current) {
+          pointsLayerView.current.filter = new FeatureFilter();
+        }
+      });
+
+      view.ui.add(seasonsExpand, 'top-left');
+    });
+
+    view.whenLayerView(areasLayer).then((layerView) => {
+      areasLayerView.current = layerView;
+
+      pointClickEvent = drawRadiusEvent(
+        view,
+        pointsLayer,
+        areasLayerView.current,
+      );
+    });
 
     // getPointsData(pointsLayer).then(x => console.log(x));
     // getAreasData(areasLayer).then(x => console.log(x[0].geometry.centroid));
@@ -81,22 +103,38 @@ export const ArcMapView: React.FC = () => {
     view.ui.add(searchWidget, 'top-left');
     view.ui.add(ccWidget, 'bottom-leading');
 
-    setViewMain(view);
-
     return () => {
-      drawRadiusEventId.remove();
-      viewMain?.destroy();
-      console.log('A')
+      expandEvent.remove();
+      pointClickEvent.remove();
+      view.destroy();
     };
   }, []);
 
   return (
     <>
-      <PointFeaturesFilter
-        view={viewMain}
-        setView={setViewMain}
-        pointsLayerRef={pointsLayerRef}
-      />
+      <div ref={expandWidget} className="seasons-filter esri-widget">
+        {[
+          { type: 'goverment', name: 'Пункт Незламності' },
+          { type: 'business', name: 'Пункт Незламності відповідального бізнесу' },
+        ].map(({ type, name }) => (
+          <button
+            type="button"
+            key={type}
+            className="season-item"
+            onClick={() => {
+              if (!pointsLayerView.current) {
+                return;
+              }
+
+              pointsLayerView.current.filter = new FeatureFilter({
+                where: `typeOfPoint = '${type}'`,
+              });
+            }}
+          >
+            {name}
+          </button>
+        ))}
+      </div>
 
       <button
         type='button'

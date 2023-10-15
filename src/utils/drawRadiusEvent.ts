@@ -1,13 +1,16 @@
+/* eslint-disable no-param-reassign */
 import Graphic from '@arcgis/core/Graphic';
 import Circle from '@arcgis/core/geometry/Circle';
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import { SimpleFillSymbol } from '@arcgis/core/symbols';
 import MapView from '@arcgis/core/views/MapView';
+import FeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import { getRadiusById } from './pointsLayer';
 
-export function hangDrawRadiusOnCLickEvent(
+export function drawRadiusEvent(
   view: MapView,
   layerToFilter: FeatureLayer,
+  areasLayerView: __esri.FeatureLayerView,
 ): IHandle {
   return view.on('click', async (event) => {
     const opts = {
@@ -53,8 +56,15 @@ export function hangDrawRadiusOnCLickEvent(
           symbol: fillSymbol,
         });
 
+        areasLayerView.filter = new FeatureFilter({
+          geometry: circleGeometry,
+          spatialRelationship: 'intersects',
+        });
+
         view.graphics.add(circleGraphic);
       }
+    } else {
+      areasLayerView.filter = new FeatureFilter();
     }
   });
 }
