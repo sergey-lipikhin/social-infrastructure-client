@@ -1,41 +1,43 @@
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
-import LabelClass from '@arcgis/core/layers/support/LabelClass';
-import { SimpleRenderer } from '@arcgis/core/renderers';
+import { UniqueValueRenderer } from '@arcgis/core/renderers';
 import { PictureMarkerSymbol } from '@arcgis/core/symbols';
 
 export function createPointsLayer(): FeatureLayer {
-  const renderer = new SimpleRenderer({
-    symbol: new PictureMarkerSymbol({
-      // eslint-disable-next-line max-len
-      url: 'http://static.arcgis.com/images/Symbols/NPS/npsPictograph_0231b.png',
-      width: '18px',
-      height: '18px',
-    }),
+  const govermentSymbol = new PictureMarkerSymbol({
+    url: 'https://nezlamnist.gov.ua/img/bs_icon.svg',
+    width: '40px',
+    height: '40px',
+  });
+  const businessSymbol = new PictureMarkerSymbol({
+    url: 'https://nezlamnist.gov.ua/img/pn_icon.svg',
+    width: '40px',
+    height: '40px',
   });
 
-  const label = new LabelClass({
-    symbol: {
-      type: 'text',
-      color: '#FFFFFF',
-      haloColor: '#5E8D74',
-      haloSize: '2px',
-      font: {
-        size: '16px',
-        family: 'Noto Sans',
-        style: 'italic',
-        weight: 'normal',
+  const renderer = new UniqueValueRenderer({
+    legendOptions: {
+      title: 'Route type',
+    },
+    defaultSymbol: govermentSymbol,
+    defaultLabel: 'Other',
+    field: 'typeOfPoint',
+    uniqueValueInfos: [
+      {
+        value: 'goverment',
+        symbol: govermentSymbol,
+        label: 'Interstate',
       },
-    },
-    labelPlacement: 'above-center',
-    labelExpressionInfo: {
-      expression: '$feature.id',
-    },
+      {
+        value: 'business',
+        symbol: businessSymbol,
+        label: 'US Highway',
+      },
+    ],
   });
 
   return new FeatureLayer({
     url: import.meta.env.VITE_POINTS_LAYER_URL,
     renderer,
-    labelingInfo: [label],
     title: 'Пункт незламності',
   });
 }

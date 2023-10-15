@@ -1,0 +1,16 @@
+.seasons-filter {
+  width: 150%;
+}
+
+.season-item {
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  vertical-align: baseline;
+  cursor: pointer;
+}
+
+.season-item:focus,
+.season-item:hover {
+  background-color: gainsboro;
+}

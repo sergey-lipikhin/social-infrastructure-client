@@ -1,3 +1,12 @@
 .red {
   color: red;
 }
+
+.esri-ui-manual-container {
+  display: none;
+}
+
+.esri-view-surface.esri-view-surface--touch-none::after {
+  display: none;
+}
+
