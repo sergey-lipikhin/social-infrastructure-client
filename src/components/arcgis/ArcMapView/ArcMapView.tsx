@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import React, { useEffect, useRef, useId } from 'react';
+import React, { useEffect, useRef, useId, useState } from 'react';
 import debouce from 'debounce';
 import esriConfig from '@arcgis/core/config';
 import MapView from '@arcgis/core/views/MapView';
@@ -20,15 +20,22 @@ import Expand from '@arcgis/core/widgets/Expand';
 import Popup from '@arcgis/core/widgets/Popup';
 import { getAddressByLocation } from '@utils/getAddressByLocation';
 import { LatLongWidget } from '@components/LatLongWidget';
+import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion';
+
+type Coords = {
+  latitude: number,
+  longitude: number,
+};
 
 export const ArcMapView: React.FC = () => {
   const mapDiv = useRef(null);
   const mapRef = useRef<Map | null>(null);
-  const viewRef = useRef<MapView | null>(null);
 
   const expandWidget = useRef<HTMLDivElement | null>(null);
   const pointsLayerView = useRef<__esri.FeatureLayerView | null>(null);
   const areasLayerView = useRef<__esri.FeatureLayerView | null>(null);
+
+  const [coords, setCoords] = useState<Coords>({ latitude: 0, longitude: 0 });
 
   const latLongWidgetId = useId();
 
@@ -101,6 +108,13 @@ export const ArcMapView: React.FC = () => {
     const editor = new Editor({ view });
     const homeButton = new Home({ view });
     const searchWidget = new Search({ view });
+    const ccWidget = new CoordinateConversion({ view });
+
+    view.on('pointer-move', () => {
+      const { latitude, longitude } = ccWidget.viewModel.currentLocation;
+
+      setCoords({ latitude, longitude });
+    });
 
     editor.viewModel.sketchViewModel.on('update', debouce(
       async (event) => {
@@ -134,12 +148,10 @@ export const ArcMapView: React.FC = () => {
     view.ui.add(homeButton, 'top-left');
     view.ui.add(searchWidget, 'top-left');
 
-    viewRef.current = view;
-
     return () => {
       expandEvent.remove();
       pointClickEvent.remove();
-      viewRef.current?.destroy();
+      view.destroy();
     };
   }, []);
 
@@ -168,9 +180,11 @@ export const ArcMapView: React.FC = () => {
           </button>
         ))}
       </div>
-      <div ref={mapDiv} className='map-view' />
+
+      <div ref={mapDiv} className="map-view" />
+
       <LatLongWidget
-        viewRef={viewRef}
+        coords={coords}
         id={latLongWidgetId}
       />
     </>
