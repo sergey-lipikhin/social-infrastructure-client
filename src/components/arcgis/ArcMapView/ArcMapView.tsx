@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import React, { useEffect, useRef, useState } from 'react';
+import debouce from 'debounce';
 import esriConfig from '@arcgis/core/config';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
@@ -16,6 +17,8 @@ import Search from '@arcgis/core/widgets/Search';
 import './ArcMapView.css';
 import FeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import Expand from '@arcgis/core/widgets/Expand';
+import Popup from '@arcgis/core/widgets/Popup';
+import { getAddressByLocation } from '@utils/getAddressByLocation';
 
 export const ArcMapView: React.FC = () => {
   const mapDiv = useRef(null);
@@ -46,22 +49,17 @@ export const ArcMapView: React.FC = () => {
         longitude: 35.157650,
       }),
       zoom: 11,
-    });
-
-    const editor = new Editor({
-      view,
-    });
-
-    const homeButton = new Home({
-      view,
-    });
-
-    const ccWidget = new CoordinateConversion({
-      view,
-    });
-
-    const searchWidget = new Search({
-      view,
+      popup: new Popup({
+        dockEnabled: true,
+        dockOptions: {
+          buttonEnabled: false,
+          breakpoint: false,
+          position: 'bottom-left',
+        },
+        visibleElements: {
+          closeButton: false,
+        },
+      }),
     });
 
     let expandEvent: IHandle; let pointClickEvent: IHandle;
@@ -98,10 +96,37 @@ export const ArcMapView: React.FC = () => {
     // getPointsData(pointsLayer).then(x => console.log(x));
     // getAreasData(areasLayer).then(x => console.log(x[0].geometry.centroid));
 
+    const editor = new Editor({ view });
+    const homeButton = new Home({ view });
+    const ccWidget = new CoordinateConversion({ view });
+    const searchWidget = new Search({ view });
+
+    editor.viewModel.sketchViewModel.on('update', debouce(
+      async (event) => {
+        const { geometry } = event.graphics[0];
+
+        if ('longitude' in geometry && 'latitude' in geometry) {
+          const address = await getAddressByLocation(new Point({
+            latitude: geometry.latitude as number,
+            longitude: geometry.longitude as number,
+          }));
+
+          if (!address) {
+            return;
+          }
+
+          editor.viewModel.featureFormViewModel.setValue('region', address.region);
+          editor.viewModel.featureFormViewModel.setValue('city', address.city);
+          editor.viewModel.featureFormViewModel.setValue('street', address.street);
+        }
+      },
+      300,
+    ));
+
     view.ui.add(editor, 'top-right');
     view.ui.add(homeButton, 'top-left');
     view.ui.add(searchWidget, 'top-left');
-    view.ui.add(ccWidget, 'bottom-leading');
+    view.ui.add(ccWidget, 'bottom-right');
 
     return () => {
       expandEvent.remove();

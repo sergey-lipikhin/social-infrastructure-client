@@ -1,6 +1,7 @@
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import { UniqueValueRenderer } from '@arcgis/core/renderers';
 import { PictureMarkerSymbol } from '@arcgis/core/symbols';
+import PopupTemplate from '@arcgis/core/PopupTemplate';
 
 export function createPointsLayer(): FeatureLayer {
   const govermentSymbol = new PictureMarkerSymbol({
@@ -12,6 +13,37 @@ export function createPointsLayer(): FeatureLayer {
     url: 'https://nezlamnist.gov.ua/img/pn_icon.svg',
     width: '40px',
     height: '40px',
+  });
+
+  const template = new PopupTemplate({
+    title: '{typeOfPoint}',
+    content: [
+      {
+        type: 'fields',
+        fieldInfos: [
+          {
+            fieldName: 'typeOfPoint',
+            label: 'Тип',
+          },
+          {
+            fieldName: 'radius',
+            label: 'Радіус обслуговування',
+          },
+          {
+            fieldName: 'region',
+            label: 'Регіон',
+          },
+          {
+            fieldName: 'city',
+            label: 'Місто',
+          },
+          {
+            fieldName: 'street',
+            label: 'Вулиця',
+          },
+        ],
+      },
+    ],
   });
 
   const renderer = new UniqueValueRenderer({
@@ -39,6 +71,7 @@ export function createPointsLayer(): FeatureLayer {
     url: import.meta.env.VITE_POINTS_LAYER_URL,
     renderer,
     title: 'Пункт незламності',
+    popupTemplate: template,
   });
 }
 

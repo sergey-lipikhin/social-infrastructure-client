@@ -2,7 +2,7 @@
   color: red;
 }
 
-.esri-ui-manual-container {
+.esri-component.esri-attribution.esri-widget {
   display: none;
 }
 
