@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useId } from 'react';
 import debouce from 'debounce';
 import esriConfig from '@arcgis/core/config';
 import MapView from '@arcgis/core/views/MapView';
@@ -11,7 +11,7 @@ import { createPointsLayer, getPointsData } from '@utils/pointsLayer';
 import { drawRadiusEvent } from '@utils/drawRadiusEvent';
 import { createAreasLayer, getAreasData } from '@utils/areasLayer';
 import Home from '@arcgis/core/widgets/Home';
-import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion';
+
 import Search from '@arcgis/core/widgets/Search';
 
 import './ArcMapView.css';
@@ -19,16 +19,18 @@ import FeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import Expand from '@arcgis/core/widgets/Expand';
 import Popup from '@arcgis/core/widgets/Popup';
 import { getAddressByLocation } from '@utils/getAddressByLocation';
+import { LatLongWidget } from '@components/LatLongWidget';
 
 export const ArcMapView: React.FC = () => {
   const mapDiv = useRef(null);
   const mapRef = useRef<Map | null>(null);
+  const viewRef = useRef<MapView | null>(null);
 
   const expandWidget = useRef<HTMLDivElement | null>(null);
   const pointsLayerView = useRef<__esri.FeatureLayerView | null>(null);
   const areasLayerView = useRef<__esri.FeatureLayerView | null>(null);
 
-  const [c, setC] = useState(0);
+  const latLongWidgetId = useId();
 
   useEffect(() => {
     esriConfig.apiKey = import.meta.env.VITE_API_KEY;
@@ -98,7 +100,6 @@ export const ArcMapView: React.FC = () => {
 
     const editor = new Editor({ view });
     const homeButton = new Home({ view });
-    const ccWidget = new CoordinateConversion({ view });
     const searchWidget = new Search({ view });
 
     editor.viewModel.sketchViewModel.on('update', debouce(
@@ -123,15 +124,22 @@ export const ArcMapView: React.FC = () => {
       300,
     ));
 
+    const latLongWidget = document.getElementById(latLongWidgetId);
+
+    if (latLongWidget) {
+      view.ui.add(latLongWidget, 'bottom-left');
+    }
+
     view.ui.add(editor, 'top-right');
     view.ui.add(homeButton, 'top-left');
     view.ui.add(searchWidget, 'top-left');
-    view.ui.add(ccWidget, 'bottom-right');
+
+    viewRef.current = view;
 
     return () => {
       expandEvent.remove();
       pointClickEvent.remove();
-      view.destroy();
+      viewRef.current?.destroy();
     };
   }, []);
 
@@ -160,16 +168,11 @@ export const ArcMapView: React.FC = () => {
           </button>
         ))}
       </div>
-
-      <button
-        type='button'
-        className='btn btn-warning'
-        onClick={() => { setC((p) => p + 1) }}
-      >
-        Click on me
-      </button>
-      <p>{c}</p>
       <div ref={mapDiv} className='map-view' />
+      <LatLongWidget
+        viewRef={viewRef}
+        id={latLongWidgetId}
+      />
     </>
   );
 };
