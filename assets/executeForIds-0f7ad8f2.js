@@ -1,0 +1,1 @@
+import{g7 as c,hb as e,h6 as r,hc as f}from"./index-fdfa590d.js";async function u(n,t,o){const a=c(n);return e(a,r.from(t),{...o}).then(s=>s.data.count)}async function d(n,t,o){const a=c(n);return f(a,r.from(t),{...o}).then(s=>s.data.objectIds)}export{u as n,d as s};
