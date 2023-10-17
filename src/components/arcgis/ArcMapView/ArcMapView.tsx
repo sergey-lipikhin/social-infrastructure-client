@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+// eslint-disable-next-line object-curly-newline
 import React, { useEffect, useRef, useId, useState } from 'react';
 import debouce from 'debounce';
 import esriConfig from '@arcgis/core/config';
@@ -7,9 +8,9 @@ import Map from '@arcgis/core/Map';
 import Point from '@arcgis/core/geometry/Point';
 
 import Editor from '@arcgis/core/widgets/Editor';
-import { createPointsLayer, getPointsData } from '@utils/pointsLayer';
+import { createPointsLayer } from '@utils/pointsLayer';
 import { drawRadiusEvent } from '@utils/drawRadiusEvent';
-import { createAreasLayer, getAreasData } from '@utils/areasLayer';
+import { createAreasLayer } from '@utils/areasLayer';
 import Home from '@arcgis/core/widgets/Home';
 
 import Search from '@arcgis/core/widgets/Search';
@@ -76,9 +77,13 @@ export const ArcMapView: React.FC = () => {
     view.whenLayerView(pointsLayer).then((layerView) => {
       pointsLayerView.current = layerView;
 
+      if (!expandWidget.current) {
+        return;
+      }
+
       const seasonsExpand = new Expand({
         view,
-        content: expandWidget.current ?? undefined,
+        content: expandWidget.current,
         expandIcon: 'filter',
         group: 'top-left',
       });
@@ -90,6 +95,14 @@ export const ArcMapView: React.FC = () => {
       });
 
       view.ui.add(seasonsExpand, 'top-left');
+
+      new Promise<void>((resolve) => setTimeout(() => resolve(), 300)).then(() => {
+        if (!expandWidget.current) {
+          return;
+        }
+
+        expandWidget.current.style.display = 'block';
+      });
     });
 
     view.whenLayerView(areasLayer).then((layerView) => {

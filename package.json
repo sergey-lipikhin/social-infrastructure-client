@@ -1,10 +1,13 @@
 {
   "name": "social-infrastructure-client",
+  "homepage": "https://github.com/sergey-lipikhin/social-infrastructure-client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --fix",
     "preview": "vite preview"
@@ -31,6 +34,7 @@
     "eslint": "^8.51.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "gh-pages": "^6.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-checker": "^0.6.2"
