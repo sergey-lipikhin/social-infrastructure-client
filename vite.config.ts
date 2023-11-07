@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
 
 export default defineConfig({
-  base: '/social-infrastructure-client/',
+  base: '',
   plugins: [
     react(),
     checker({
@@ -22,6 +22,10 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, 'src/assets'),
       '@components': path.resolve(__dirname, 'src/components'),
       '@utils': path.resolve(__dirname, 'src/utils'),
+      '@customTypes': path.resolve(__dirname, 'src/types'),
+      '@client': path.resolve(__dirname, 'src/client'),
+      '@services': path.resolve(__dirname, 'src/services'),
+      '@redux': path.resolve(__dirname, 'src/redux'),
     }
   }
 })

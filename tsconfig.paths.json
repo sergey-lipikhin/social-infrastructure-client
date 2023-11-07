@@ -9,6 +9,18 @@
       ],
       "@utils/*": [
         "./src/utils/*"
+      ],
+      "@cutomTypes/*": [
+        "./src/types/*"
+      ],
+      "@client/*": [
+        "./src/client/*"
+      ],
+      "@services/*": [
+        "./src/services/*"
+      ],
+      "@redux/*": [
+        "./src/redux/*"
       ]
     }
   }

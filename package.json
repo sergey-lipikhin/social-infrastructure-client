@@ -1,6 +1,6 @@
 {
   "name": "social-infrastructure-client",
-  "homepage": "https://github.com/sergey-lipikhin/social-infrastructure-client",
+  "homepage": ".",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,13 +14,21 @@
   },
   "dependencies": {
     "@arcgis/core": "^4.27.6",
+    "@reduxjs/toolkit": "^1.9.7",
+    "axios": "^1.6.0",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.1",
     "classnames": "^2.3.2",
     "debounce": "^1.2.1",
+    "formik": "^2.4.5",
+    "framer-motion": "^10.16.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "uuid": "^9.0.1"
+    "react-query": "^3.39.3",
+    "react-redux": "^8.1.3",
+    "react-router-dom": "^6.18.0",
+    "uuid": "^9.0.1",
+    "yup": "^1.3.2"
   },
   "devDependencies": {
     "@mate-academy/eslint-config-react-typescript": "^1.0.12",

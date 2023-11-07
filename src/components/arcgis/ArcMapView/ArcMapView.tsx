@@ -22,6 +22,7 @@ import Popup from '@arcgis/core/widgets/Popup';
 import { getAddressByLocation } from '@utils/getAddressByLocation';
 import { LatLongWidget } from '@components/LatLongWidget';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion';
+import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
 
 type Coords = {
   latitude: number,
@@ -45,6 +46,12 @@ export const ArcMapView: React.FC = () => {
 
     const pointsLayer = createPointsLayer();
     const areasLayer = createAreasLayer();
+
+    // const pointsLayer = new GeoJSONLayer({
+    //   url: url,
+    //   copyright: "USGS Earthquakes",
+    //   popupTemplate: template
+    // });
 
     mapRef.current = new Map({
       basemap: 'streets-vector',
