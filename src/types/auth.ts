@@ -25,7 +25,11 @@ export type RegisterInputPayload = {
   name: string;
 };
 
-export type RegisterOutputPayload = {
+export type ActivationInputPayload = {
+  activationToken: string;
+};
+
+export type ActivationOutputPayload = {
   user: User;
   accessToken: string;
 };

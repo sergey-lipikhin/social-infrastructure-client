@@ -1,12 +1,12 @@
-import { User } from '@cutomTypes/User';
 import { authClient } from '@client/authClient';
 import {
+  ActivationInputPayload,
+  ActivationOutputPayload,
   LoginInputPayload,
   LoginOutputPayload,
   RefreshInputPayload,
   RefreshOutputPayload,
   RegisterInputPayload,
-  RegisterOutputPayload,
 } from '@cutomTypes/auth';
 
 async function login(
@@ -23,12 +23,19 @@ export async function refresh(
 
 async function register(
   payload: RegisterInputPayload,
-): Promise<RegisterOutputPayload> {
+): Promise<void> {
   return authClient.post('/registration', payload);
+}
+
+async function activate(
+  payload: ActivationInputPayload,
+): Promise<ActivationOutputPayload> {
+  return authClient.get(`/activation/${payload.activationToken}`);
 }
 
 export const authService = {
   login,
   refresh,
   register,
+  activate,
 };

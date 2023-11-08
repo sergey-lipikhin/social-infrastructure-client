@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import {
   Formik, Form, Field, ErrorMessage,
@@ -9,32 +9,23 @@ import { LoadingButton } from '@components/LoadingButton/LoadingButton';
 import { RegisterInputPayload } from '@cutomTypes/auth';
 import { authService } from '@services/authService';
 import { AppError } from '@cutomTypes/appError';
-import { useAppDispatch } from '@redux/hooks';
-import { login } from '@redux/features/authSlice';
 import { apiErrorService } from '@services/apiErrorService';
 
 import { registerSchema } from './RegistrationPage.validation';
 
 export const RegistrationPage: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const [error, setError] = useState('');
 
   const registerMutation = useMutation<void, AppError, RegisterInputPayload>({
     mutationFn: async (payload) => {
-      const userData = await authService.register(payload);
-
-      dispatch(login(userData));
-      navigate(location.state?.from?.pathname || '/');
+      await authService.register(payload);
     },
     onError: (err) => {
       const { title } = apiErrorService.getMessage(err);
 
       setError(title);
     },
-    onSuccess: () => console.log('check the email'),
+    onMutate: () => setError(''),
   });
 
   return (
@@ -90,7 +81,7 @@ export const RegistrationPage: React.FC = () => {
               type="submit"
               isLoading={registerMutation.isLoading}
             >
-              Увійти
+              Зареєструватися
             </LoadingButton>
 
             {error && (
@@ -99,12 +90,18 @@ export const RegistrationPage: React.FC = () => {
               </div>
             )}
 
+            {registerMutation.isSuccess && (
+              <div className="form-text fs-5 ms-2 text-success fw-bolder">
+                Активуйте акаунт за посиланням що прийшло вам на пошту
+              </div>
+            )}
+
             <Link
-              to="/registration"
+              to="/login"
               className="fs-5 ms-2 mt-3 text-center"
               style={{ textDecoration: 'underline' }}
             >
-              Створити акаунт
+              Вже маю акаунт
             </Link>
           </Form>
         </Formik>
