@@ -6,7 +6,7 @@ import {
 } from 'formik';
 
 import { LoadingButton } from '@components/LoadingButton/LoadingButton';
-import { RegisterInputPayload } from '@cutomTypes/auth';
+import { RegisterInputPayload } from '@cutomTypes/api/auth';
 import { authService } from '@services/authService';
 import { AppError } from '@cutomTypes/appError';
 import { apiErrorService } from '@services/apiErrorService';
@@ -32,7 +32,7 @@ export const RegistrationPage: React.FC = () => {
     <div className="vh-100 bg-light d-flex align-items-center
       justify-content-center flex-column"
     >
-      <h1 className="mb-3">Авторизація</h1>
+      <h1 className="mb-3">Реєстрація</h1>
 
       <div className="col-10 col-md-6 col-xxl-4">
         <Formik
@@ -80,6 +80,7 @@ export const RegistrationPage: React.FC = () => {
             <LoadingButton
               type="submit"
               isLoading={registerMutation.isLoading}
+              className="fs-3"
             >
               Зареєструватися
             </LoadingButton>

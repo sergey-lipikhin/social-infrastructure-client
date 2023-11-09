@@ -7,7 +7,7 @@ import {
   RefreshInputPayload,
   RefreshOutputPayload,
   RegisterInputPayload,
-} from '@cutomTypes/auth';
+} from '@cutomTypes/api/auth';
 
 async function login(
   payload: LoginInputPayload,

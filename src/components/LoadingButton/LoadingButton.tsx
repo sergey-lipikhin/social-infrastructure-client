@@ -17,7 +17,7 @@ export const LoadingButton: React.FC<Props> = ({
   return (
     <button
       className={cn(
-        'btn btn-primary w-100 fs-3 position-relative',
+        'btn btn-primary w-100 position-relative',
         {
           disabled: isLoading,
         },

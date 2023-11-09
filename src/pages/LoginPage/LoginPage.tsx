@@ -6,7 +6,7 @@ import {
 } from 'formik';
 
 import { LoadingButton } from '@components/LoadingButton/LoadingButton';
-import { LoginInputPayload } from '@cutomTypes/auth';
+import { LoginInputPayload } from '@cutomTypes/api/auth';
 import { authService } from '@services/authService';
 import { AppError } from '@cutomTypes/appError';
 import { useAppDispatch } from '@redux/hooks';
@@ -76,6 +76,7 @@ export const LoginPage: React.FC = () => {
             <LoadingButton
               type="submit"
               isLoading={loginMuation.isLoading}
+              className="fs-3"
             >
               Увійти
             </LoadingButton>

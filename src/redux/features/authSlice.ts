@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { User } from '@cutomTypes/User';
-import { LoginOutputPayload, RefreshOutputPayload } from '@cutomTypes/auth';
+import { LoginOutputPayload, RefreshOutputPayload } from '@cutomTypes/api/auth';
 import { accessTokenService } from '@services/accessTokenService';
 
 interface StateType {

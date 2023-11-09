@@ -2,15 +2,17 @@ import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import { UniqueValueRenderer } from '@arcgis/core/renderers';
 import { PictureMarkerSymbol } from '@arcgis/core/symbols';
 import PopupTemplate from '@arcgis/core/PopupTemplate';
+import Point from '@arcgis/core/geometry/Point';
+import { Point as PointOfInvincibility } from '@cutomTypes/experiment';
 
 export function createPointsLayer(): FeatureLayer {
   const govermentSymbol = new PictureMarkerSymbol({
-    url: 'https://nezlamnist.gov.ua/img/bs_icon.svg',
+    url: `${import.meta.env.VITE_API_URL}/img/pn_yellow.svg`,
     width: '40px',
     height: '40px',
   });
   const businessSymbol = new PictureMarkerSymbol({
-    url: 'https://nezlamnist.gov.ua/img/pn_icon.svg',
+    url: `${import.meta.env.VITE_API_URL}/img/pn_icon.svg`,
     width: '40px',
     height: '40px',
   });
@@ -84,8 +86,9 @@ export async function getPointsData(pointsLayer: FeatureLayer) {
   const queryResults = await pointsLayer.queryFeatures(query);
 
   return queryResults.features.map(({ geometry, attributes }) => ({
-    geometry,
-    attributes,
+    geometry: geometry as Point,
+    attributes: attributes as
+      Omit<PointOfInvincibility, 'id' | 'isIncluded'> & { OBJECTID: number },
   }));
 }
 

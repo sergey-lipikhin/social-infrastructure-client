@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 // eslint-disable-next-line object-curly-newline
-import React, { useEffect, useRef, useId, useState } from 'react';
+import React, { useEffect, useRef, useId, useState, useContext } from 'react';
 import debouce from 'debounce';
 import esriConfig from '@arcgis/core/config';
 import MapView from '@arcgis/core/views/MapView';
@@ -23,6 +23,7 @@ import { getAddressByLocation } from '@utils/getAddressByLocation';
 import { LatLongWidget } from '@components/LatLongWidget';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
+import { FeatureLayerContext } from '@components/FeatureLayerContext';
 
 type Coords = {
   latitude: number,
@@ -32,6 +33,8 @@ type Coords = {
 export const ArcMapView: React.FC = () => {
   const mapDiv = useRef(null);
   const mapRef = useRef<Map | null>(null);
+
+  const { pointsLayerRef } = useContext(FeatureLayerContext);
 
   const expandWidget = useRef<HTMLDivElement | null>(null);
   const pointsLayerView = useRef<__esri.FeatureLayerView | null>(null);
@@ -46,6 +49,10 @@ export const ArcMapView: React.FC = () => {
 
     const pointsLayer = createPointsLayer();
     const areasLayer = createAreasLayer();
+
+    if (pointsLayerRef) {
+      pointsLayerRef.current = pointsLayer;
+    }
 
     // const pointsLayer = new GeoJSONLayer({
     //   url: url,
@@ -62,8 +69,8 @@ export const ArcMapView: React.FC = () => {
       map: mapRef.current,
       container: mapDiv.current ?? undefined,
       center: new Point({
-        latitude: 47.826334,
-        longitude: 35.157650,
+        latitude: 46.3986,
+        longitude: 30.7259,
       }),
       zoom: 11,
       popup: new Popup({
@@ -153,6 +160,7 @@ export const ArcMapView: React.FC = () => {
           editor.viewModel.featureFormViewModel.setValue('region', address.region);
           editor.viewModel.featureFormViewModel.setValue('city', address.city);
           editor.viewModel.featureFormViewModel.setValue('street', address.street);
+          editor.viewModel.featureFormViewModel.setValue('radius', 500);
         }
       },
       300,
