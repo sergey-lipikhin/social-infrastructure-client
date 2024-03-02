@@ -1,27 +1,48 @@
-# React + TypeScript + Vite
+# Social Infrastructure Optimization
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Introduction
 
-Currently, two official plugins are available:
+This project focuses on the optimization of the placement of social infrastructure objects through a geospatial approach. The goal is to create software that facilitates finding the optimal locations for these objects, promoting efficient resource utilization, reducing costs, and enhancing service quality.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Objectives
 
-## Expanding the ESLint configuration
+- **Research Object:** Optimization of the placement of social infrastructure objects.
+- **Subject:** Software development for the geospatial optimization of social infrastructure object locations.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Materials, Methods, and Technical Tools
 
-- Configure the top-level `parserOptions` property like this:
+- **Programming Paradigm:** Object-oriented programming.
+- **Programming Languages:** Python, TypeScript.
+- **Development Environments:** Spyder, Visual Studio Code.
+- **Geographic Information System:** ArcGIS.
+- **Metaheuristic Methods:** Genetic algorithm.
+- **Architectural Design Pattern:** Model-View-Controller (MVC).
+- **Version Control:** Monorepository.
+- **Frontend Library:** React.js.
+- **Backend Environment:** Node.js.
+- **Operating System:** Windows 10 with GeForce GTX 1060 graphics card.
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+## Results
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+The novelty of this work lies in the method of optimizing the placement of social infrastructure objects using a genetic algorithm. It defines stages for forming the final solution and applies a modified recovery operator.
+
+## Conclusions
+
+The project has successfully developed software for mapping the social infrastructure system on a real map and optimizing the placement of its objects.
+
+## Application Area
+
+This software finds utility in both governmental institutions and private organizations aiming to optimize the locations of socially significant facilities.
+
+## Client-side architecture
+
+![Work panels](./description/client-components.png)
+
+## API Documentation
+
+For details on utilizing the API, refer to [API Repo](https://github.com/sergey-lipikhin/social-infrastructure-api).
+
+### Images
+![Work panels](./description/social-infrastructure-frame-3.jpg)
+![Map edit](./description/social-infrastructure-frame-2.jpg)
+![Experiment results](./description/results.png)
