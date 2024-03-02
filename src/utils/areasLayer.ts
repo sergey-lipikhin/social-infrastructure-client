@@ -1,5 +1,6 @@
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import Polygon from '@arcgis/core/geometry/Polygon';
+import { Area } from '@cutomTypes/experiment/areas';
 
 export function createAreasLayer(): FeatureLayer {
   return new FeatureLayer({
@@ -8,7 +9,7 @@ export function createAreasLayer(): FeatureLayer {
   });
 }
 
-export async function getAreasData(pointsLayer: FeatureLayer) {
+export async function getAreasData(pointsLayer: FeatureLayer): Promise<Area[]> {
   const query = pointsLayer.createQuery();
 
   query.where = '1=1';
@@ -18,6 +19,9 @@ export async function getAreasData(pointsLayer: FeatureLayer) {
 
   return queryResults.features.map(({ geometry, attributes }) => ({
     geometry: geometry as Polygon,
-    attributes,
+    attributes: {
+      id: attributes.OBJECTID,
+      name: attributes.name,
+    },
   }));
 }

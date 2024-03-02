@@ -3,7 +3,7 @@ import { UniqueValueRenderer } from '@arcgis/core/renderers';
 import { PictureMarkerSymbol } from '@arcgis/core/symbols';
 import PopupTemplate from '@arcgis/core/PopupTemplate';
 import Point from '@arcgis/core/geometry/Point';
-import { Point as PointOfInvincibility } from '@cutomTypes/experiment';
+import { Point as PointOfInvincibility } from '@cutomTypes/experiment/point';
 
 export function createPointsLayer(): FeatureLayer {
   const govermentSymbol = new PictureMarkerSymbol({
@@ -77,7 +77,9 @@ export function createPointsLayer(): FeatureLayer {
   });
 }
 
-export async function getPointsData(pointsLayer: FeatureLayer) {
+export async function getPointsData(
+  pointsLayer: FeatureLayer,
+): Promise<PointOfInvincibility[]> {
   const query = pointsLayer.createQuery();
 
   query.where = '1=1';
@@ -85,10 +87,18 @@ export async function getPointsData(pointsLayer: FeatureLayer) {
 
   const queryResults = await pointsLayer.queryFeatures(query);
 
-  return queryResults.features.map(({ geometry, attributes }) => ({
-    geometry: geometry as Point,
-    attributes: attributes as
-      Omit<PointOfInvincibility, 'id' | 'isIncluded'> & { OBJECTID: number },
+  return queryResults.features.map(({
+    geometry,
+    attributes: { OBJECTID, ...rest },
+  }) => ({
+    geometry: {
+      latitude: (geometry as Point).latitude,
+      longitude: (geometry as Point).longitude,
+    },
+    attributes: {
+      id: OBJECTID,
+      ...rest,
+    },
   }));
 }
 

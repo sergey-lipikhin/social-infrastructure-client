@@ -1,0 +1,43 @@
+
+.Toastify__toast {
+  font-family: 'DniproCity', sans-serif;
+  font-size: 24px;
+}
+
+.Toastify__toast-icon {
+  width: 25px;
+  margin-inline-end: 20px;
+}
+
+.Toastify__close-button {
+  display: none;
+}
+
+.Toastify__progress-bar {
+  height: 7px;
+}
+
+@media (min-width: 768px) {
+  .Toastify__toast-container {
+    width: 50%;
+  }
+
+  .Toastify__toast {
+    border-radius: 16px;
+    padding: 24px 16px;
+  }
+
+  .Toastify__toast-container--bottom-right {
+    right: 28px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .Toastify__toast-container {
+    width: 500px;
+  }
+
+  .Toastify__toast-container--bottom-right {
+    right: 36px;
+  }
+}

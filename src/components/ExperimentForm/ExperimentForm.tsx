@@ -4,46 +4,48 @@ import { LoadingButton } from '@components/LoadingButton/LoadingButton';
 import { getPointsData } from '@utils/pointsLayer';
 import { FeatureLayerContext } from '@components/FeatureLayerContext';
 import { AppError } from '@cutomTypes/appError';
-import { ExperimentInputPayload } from '@cutomTypes/api/experiment';
 import { experimentService } from '@services/experimentService';
+import { useAppDispatch } from '@redux/hooks';
+import { getAreasData } from '@utils/areasLayer';
+import { getMatrix } from '@utils/getMatrix';
+import { toastService } from '@services/toastService';
+import { apiErrorService } from '@services/apiErrorService';
+import { addExperiment } from '@redux/features/experimentsSlice';
 
 export const ExperimentForm: React.FC = () => {
-  const { pointsLayerRef } = useContext(FeatureLayerContext);
+  const dispatch = useAppDispatch();
+  const { pointsLayerRef, areasLayerRef } = useContext(FeatureLayerContext);
 
-  const [timeThreshold, setTimeThreshold] = useState(0);
-  const [hasEquipment, setHasEquipment] = useState(false);
+  const [iterationsThreshold, setIterationsThreshold] = useState(0);
 
   const { isLoading, mutate }
     = useMutation<void, AppError>({
       mutationFn: async () => {
-        if (!pointsLayerRef || !pointsLayerRef.current) {
+        if (!pointsLayerRef || !pointsLayerRef.current
+          || !areasLayerRef || !areasLayerRef.current) {
           return;
         }
 
         const points = await getPointsData(pointsLayerRef.current);
-        const initial: ExperimentInputPayload['initial'] = points.map(
-          ({
-            geometry: { latitude, longitude },
-            attributes: { OBJECTID, ...restAttributes },
-          }) => ({
-            geometry: {
-              latitude,
-              longitude,
-            },
-            attributes: {
-              ...restAttributes,
-              id: OBJECTID,
-            },
-          }),
-        );
+        const areas = await getAreasData(areasLayerRef?.current);
+
+        const matrix = getMatrix(points, areas);
+
+        console.log(matrix.map(row => row[54]));
+        console.log(matrix.map(row => row[89]));
+        console.log(matrix.map(row => row[19]));
 
         const result = await experimentService.makeExperiment({
-          timeThreshold,
-          hasEquipment,
-          initial,
+          iterationsThreshold,
+          points: points.map(({ attributes }) => ({ ...attributes })),
+          areas: areas.map(({ attributes }) => ({ ...attributes })),
+          matrix,
         });
 
-        console.log(result);
+        dispatch(addExperiment(result));
+      },
+      onError: (error: AppError) => {
+        toastService.error(apiErrorService.getMessage(error));
       },
     });
 
@@ -52,36 +54,20 @@ export const ExperimentForm: React.FC = () => {
       <div className="d-flex col-6 mb-4">
         <label
           className="me-5"
-          htmlFor="equipment"
-          style={{ width: 300 }}
-        >
-          Додаткове обладнання
-        </label>
-
-        <input
-          type="checkbox"
-          className="form-check-input"
-          id="equipment"
-          checked={hasEquipment}
-          onChange={(event) => setHasEquipment(event.target.checked)}
-        />
-      </div>
-
-      <div className="d-flex col-6 mb-4">
-        <label
-          className="me-5"
           htmlFor="exprerimentTime"
-          style={{ width: 300 }}
+          style={{ width: 400 }}
         >
-          Максимальний час пошуку (с.)
+          Максимальна кількість ітерацій
         </label>
 
         <input
           type="number"
           className="form-control"
           id="equipment"
-          value={timeThreshold}
-          onChange={(event) => setTimeThreshold(Number(event.target.value))}
+          value={iterationsThreshold}
+          onChange={(event) => (
+            setIterationsThreshold(Number(event.target.value))
+          )}
         />
       </div>
 

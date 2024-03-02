@@ -1,15 +1,14 @@
-import { Point } from '@cutomTypes/experiment';
+import { Experiment } from '@cutomTypes/experiment';
+import { AreaAttributes } from '@cutomTypes/experiment/areas';
+import { PointAttributtes } from '@cutomTypes/experiment/point';
 
-export type ExperimentInputPayload = {
-  timeThreshold: number,
-  hasEquipment: boolean,
-  initial: Array<{
-    geometry: {
-      latitude: number;
-      longitude: number;
-    },
-    attributes: Omit<Point, 'equipment' | 'isIncluded'>,
-  }>
+export type MakeExperimentInputPayload = {
+  iterationsThreshold: number,
+  points: PointAttributtes[];
+  areas: AreaAttributes[];
+  matrix: Array<Array<number>>;
 };
 
-export type ExperimentOutputPayload = Array<Point>;
+export type MakeExperimentOutputPayload = Experiment;
+
+export type GetExperimentOutputPayload = Experiment[];

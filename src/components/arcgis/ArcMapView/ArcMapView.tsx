@@ -34,7 +34,7 @@ export const ArcMapView: React.FC = () => {
   const mapDiv = useRef(null);
   const mapRef = useRef<Map | null>(null);
 
-  const { pointsLayerRef } = useContext(FeatureLayerContext);
+  const { pointsLayerRef, areasLayerRef } = useContext(FeatureLayerContext);
 
   const expandWidget = useRef<HTMLDivElement | null>(null);
   const pointsLayerView = useRef<__esri.FeatureLayerView | null>(null);
@@ -52,6 +52,10 @@ export const ArcMapView: React.FC = () => {
 
     if (pointsLayerRef) {
       pointsLayerRef.current = pointsLayer;
+    }
+
+    if (areasLayerRef) {
+      areasLayerRef.current = areasLayer;
     }
 
     // const pointsLayer = new GeoJSONLayer({
@@ -187,7 +191,7 @@ export const ArcMapView: React.FC = () => {
     <>
       <div ref={expandWidget} className="seasons-filter esri-widget">
         {[
-          { type: 'goverment', name: 'Пункт Незламності' },
+          { type: 'government', name: 'Пункт Незламності' },
           { type: 'business', name: 'Пункт Незламності відповідального бізнесу' },
         ].map(({ type, name }) => (
           <button

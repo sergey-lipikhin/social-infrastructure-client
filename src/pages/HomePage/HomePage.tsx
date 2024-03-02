@@ -5,6 +5,7 @@ import { logout } from '@redux/features/authSlice';
 import { useAppDispatch } from '@redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import { FeatureLayerProvider } from '@components/FeatureLayerContext';
+import { ExperimentsList } from '@components/ExperimentsList';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,6 +30,8 @@ export const HomePage: React.FC = () => {
             </div>
 
             <ExperimentForm />
+
+            <ExperimentsList />
           </div>
         </div>
 
